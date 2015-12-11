@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -16,52 +17,21 @@ import org.jnativehook.mouse.NativeMouseMotionListener;
 
 import com.cionik.autoroboto.MouseButton;
 import com.cionik.autoroboto.Time;
-import com.cionik.autoroboto.clicker.AutoClicker;
-import com.cionik.autoroboto.clicker.AutoClickerListener;
+import com.cionik.autoroboto.task.ClickTask;
+import com.cionik.autoroboto.task.Task;
+import com.cionik.autoroboto.task.TaskListener;
+import com.cionik.autoroboto.task.TaskScheduler;
 import com.cionik.utils.swing.ScreenPointSelectDialog;
 
 public class ClickerPanelController extends ClickerPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private AutoClicker clicker;
+	private TaskScheduler scheduler = new TaskScheduler();
 	
-	private NativeKeyListener stopKeyListener = new NativeKeyListener() {
-
-		@Override
-		public void nativeKeyPressed(NativeKeyEvent e) {
-			String key = stopKeyTextField.getText();
-			if (clicker != null && clicker.isRunning() && key != null) {
-				if (NativeKeyEvent.getKeyText(e.getKeyCode()).equals(key)) {
-						clicker.stop();
-				}
-			}
-		}
-
-		@Override
-		public void nativeKeyReleased(NativeKeyEvent e) {
-		}
-			
-		@Override
-		public void nativeKeyTyped(NativeKeyEvent e) {
-		}
-			
-	};
+	private NativeMouseMotionListener clickerSkipListener;
 	
-	private NativeMouseMotionListener mouseListener = new NativeMouseMotionListener() {
-
-		@Override
-		public void nativeMouseDragged(NativeMouseEvent e) {
-		}
-
-		@Override
-		public void nativeMouseMoved(NativeMouseEvent e) {
-			if (clicker != null && clicker.isRunning() && onlyMovingCheckBox.isSelected()) {
-				clicker.skip();
-			}
-		}
-		
-	};
+	private Task clickTask;
 	
 	public ClickerPanelController() {
 		super();
@@ -76,32 +46,32 @@ public class ClickerPanelController extends ClickerPanel {
 	}
 	
 	private void addListeners() {
-		ActionListener toggleStart = e -> startButton.setEnabled(canStart());
-		DocumentListener toggleStartDoc = new DocumentListener() {
+		ActionListener checkStart = e -> startButton.setEnabled(canStart());
+		DocumentListener checkStartDoc = new DocumentListener() {
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				toggleStart.actionPerformed(null);
+				checkStart.actionPerformed(null);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				toggleStart.actionPerformed(null);
+				checkStart.actionPerformed(null);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				toggleStart.actionPerformed(null);
+				checkStart.actionPerformed(null);
 			}
 			
 		};
 		
-		mouseLocationCheckBox.addActionListener(toggleStart);
-		xTextField.getDocument().addDocumentListener(toggleStartDoc);
-		yTextField.getDocument().addDocumentListener(toggleStartDoc);
-		delayTextField.getDocument().addDocumentListener(toggleStartDoc);
-		numOfClicksTextField.getDocument().addDocumentListener(toggleStartDoc);
-		clickInfinitelyCheckBox.addActionListener(toggleStart);
+		mouseLocationCheckBox.addActionListener(checkStart);
+		clickInfinitelyCheckBox.addActionListener(checkStart);
+		xTextField.getDocument().addDocumentListener(checkStartDoc);
+		yTextField.getDocument().addDocumentListener(checkStartDoc);
+		delayTextField.getDocument().addDocumentListener(checkStartDoc);
+		numOfClicksTextField.getDocument().addDocumentListener(checkStartDoc);
 		
 		mouseLocationCheckBox.addActionListener(e -> {
 			boolean selected = !mouseLocationCheckBox.isSelected();
@@ -118,42 +88,32 @@ public class ClickerPanelController extends ClickerPanel {
 			yTextField.setValue(p.y);
 		});
 		
-		startButton.addActionListener(e -> {
-			startButton.setEnabled(false);
-			stopButton.setEnabled(true);
-			
-			start();
-		});
-		
+		startButton.addActionListener(e -> start());
 		stopButton.addActionListener(e -> stop());
+		
+		scheduler.addListener(new ClickTaskListener());
+		if (GlobalScreen.isNativeHookRegistered()) {
+			GlobalScreen.addNativeKeyListener(new HotkeyListener());
+		}
 	}
 	
 	private void start() {
 		try {
-			clicker = new AutoClicker((MouseButton) mouseButtonComboBox.getSelectedItem(),
-				mouseLocationCheckBox.isSelected() ? null : new Point(xTextField.getValue(), yTextField.getValue()),
-				initialDelayTextField.getValue() == null ? null : new Time(initialDelayTextField.getValue(), (TimeUnit) initialDelayComboBox.getSelectedItem()),
-				new Time(delayTextField.getValue(), (TimeUnit) delayComboBox.getSelectedItem()),
-				clickInfinitelyCheckBox.isSelected() ? -1 : numOfClicksTextField.getValue());
-			clicker.addListener(new AutoClickerListenerImpl());
-			clicker.start();
+			Point point = mouseLocationCheckBox.isSelected() ? null : new Point(xTextField.getValue(), yTextField.getValue());
+			MouseButton button = (MouseButton) mouseButtonComboBox.getSelectedItem();
+			int iterations = clickInfinitelyCheckBox.isSelected() ? -1 : numOfClicksTextField.getValue();
+			clickTask = new ClickTask(point, button, iterations);
 			
-			if (GlobalScreen.isNativeHookRegistered()) {
-				if (!stopKeyTextField.getText().equals("")) {
-					GlobalScreen.addNativeKeyListener(stopKeyListener);
-				}
-				
-				if (onlyMovingCheckBox.isSelected()) {
-					GlobalScreen.addNativeMouseMotionListener(mouseListener);
-				}
-			}
-		} catch (AWTException ex) {
-			ex.printStackTrace();
+			Time initialDelay = new Time(initialDelayTextField.getValue(0), (TimeUnit) initialDelayComboBox.getSelectedItem());
+			Time delay = new Time(delayTextField.getValue(0), (TimeUnit) delayComboBox.getSelectedItem());
+			scheduler.schedule(clickTask, initialDelay, delay);
+		} catch (AWTException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	private void stop() {
-		clicker.stop();
+		scheduler.shutdown();
 	}
 	
 	private boolean canStart() {
@@ -162,17 +122,68 @@ public class ClickerPanelController extends ClickerPanel {
 				((numOfClicksTextField.getValue() != null && numOfClicksTextField.getValue() > 0) || clickInfinitelyCheckBox.isSelected());
 	}
 	
-	private class AutoClickerListenerImpl implements AutoClickerListener {
+	private class HotkeyListener implements NativeKeyListener {
 
 		@Override
-		public void started() {
-			
+		public void nativeKeyPressed(NativeKeyEvent e) {
+			KeyStroke stroke = stopKeyTextField.getKeyStroke();
+			if (stroke != null && stroke.getKeyCode() == e.getKeyCode() && stroke.getModifiers() == e.getModifiers()) {
+				if (scheduler.isRunning()) {
+					if (scheduler.isRunning()) {
+						stop();
+					}
+				} else {
+					if (canStart()) {
+						start();
+					}
+				}
+			}
 		}
 
 		@Override
-		public void stopped() {
-			GlobalScreen.removeNativeKeyListener(stopKeyListener);
-			GlobalScreen.removeNativeMouseMotionListener(mouseListener);
+		public void nativeKeyReleased(NativeKeyEvent e) {
+		}
+
+		@Override
+		public void nativeKeyTyped(NativeKeyEvent e) {
+		}
+		
+	}
+	
+	private class ClickerSkipListener implements NativeMouseMotionListener {
+
+		@Override
+		public void nativeMouseDragged(NativeMouseEvent e) {
+		}
+
+		@Override
+		public void nativeMouseMoved(NativeMouseEvent e) {
+			if (clickTask != null && scheduler.isRunning()) {
+				clickTask.skip();
+			}
+		}
+		
+	}
+	
+	private class ClickTaskListener implements TaskListener {
+
+		@Override
+		public void beforeStart() {
+			if (GlobalScreen.isNativeHookRegistered() && onlyMovingCheckBox.isSelected()) {
+				clickerSkipListener = new ClickerSkipListener();
+				GlobalScreen.addNativeMouseMotionListener(clickerSkipListener);
+			}
+			
+			startButton.setEnabled(false);
+			stopButton.setEnabled(true);
+		}
+
+		@Override
+		public void afterShutdown() {
+			if (clickerSkipListener != null) {
+				GlobalScreen.removeNativeMouseMotionListener(clickerSkipListener);
+				clickerSkipListener = null;
+			}
 			
 			stopButton.setEnabled(false);
 			startButton.setEnabled(true);

@@ -1,10 +1,8 @@
 package com.cionik.autoroboto.ui;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,9 +29,9 @@ public class ClickerPanel extends JPanel {
 	
 	protected JButton clearButton = new JButton("Clear");
 	
-	protected JCheckBox mouseLocationCheckBox = new JCheckBox("Click at current mouse location");
+	protected JCheckBox mouseLocationCheckBox = new JCheckBox("Click at Current Mouse Location");
 	
-	protected JCheckBox onlyMovingCheckBox = new JCheckBox("Only when mouse is not moving");
+	protected JCheckBox onlyMovingCheckBox = new JCheckBox("Pause on Mouse Move");
 	
 	protected JCheckBox clickInfinitelyCheckBox = new JCheckBox("Click Infinitely");
 	
@@ -76,8 +74,6 @@ public class ClickerPanel extends JPanel {
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		buttonPanel.add(new JLabel("Mouse Button: "));
 		buttonPanel.add(mouseButtonComboBox);
-		System.out.println(buttonPanel.getInsets());
-		//buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		JPanel pointPanel = new JPanel(new MigLayout());
 		pointPanel.add(buttonPanel, "aligny top, span, wrap");
@@ -101,11 +97,11 @@ public class ClickerPanel extends JPanel {
 		delayPanel.add(delayTextField);
 		delayPanel.add(delayComboBox, "wrap");
 		delayPanel.add(new JSeparator(), "span, growx, wrap");
+		delayPanel.add(clickInfinitelyCheckBox, "wrap");
 		delayPanel.add(new JLabel("Number of Clicks: "));
 		delayPanel.add(numOfClicksTextField, "wrap");
-		delayPanel.add(clickInfinitelyCheckBox, "wrap");
 		delayPanel.add(new JSeparator(), "span, growx, wrap");
-		delayPanel.add(new JLabel("Key to Stop: "));
+		delayPanel.add(new JLabel("Key to Start & Stop: "));
 		delayPanel.add(stopKeyTextField);
 		delayPanel.add(clearButton);
 		

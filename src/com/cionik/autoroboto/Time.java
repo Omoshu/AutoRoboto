@@ -21,4 +21,8 @@ public class Time {
 		return unit;
 	}
 	
+	public long convert(TimeUnit newUnit) {
+		return unit.convert(duration, newUnit);
+	}
+	
 }
