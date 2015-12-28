@@ -7,15 +7,18 @@ import javax.swing.JTabbedPane;
 
 public class TabbedWindow {
 	
-	private JFrame frame = new JFrame("AutoRoboto");
+	private JFrame frame = new JFrame();
 	
-	private JTabbedPane tabbedPane = new JTabbedPane();
+	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 	
-	public TabbedWindow() {
-		initComponents();
+	public TabbedWindow(String title) {
+		initComponents(title);
 	}
 	
 	public void setVisible(boolean b) {
+		if (b) {
+			frame.setLocationByPlatform(true);
+		}
 		frame.setVisible(b);
 	}
 	
@@ -25,10 +28,10 @@ public class TabbedWindow {
 	
 	public void pack() {
 		frame.pack();
-		frame.setLocationByPlatform(true);
 	}
 	
-	private void initComponents() {
+	private void initComponents(String title) {
+		frame.setTitle(title);
 		frame.add(tabbedPane);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

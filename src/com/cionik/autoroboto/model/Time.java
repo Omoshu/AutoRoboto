@@ -1,4 +1,4 @@
-package com.cionik.autoroboto;
+package com.cionik.autoroboto.model;
 
 import java.util.concurrent.TimeUnit;
 
