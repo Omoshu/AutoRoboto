@@ -1,6 +1,7 @@
 package com.cionik.autoroboto;
 
 import java.awt.EventQueue;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,9 +38,9 @@ public class Initialize {
 		
 		EventQueue.invokeLater(() -> {
 			TabbedWindow window = new TabbedWindow("AutoRoboto");
-			window.addTab("Clicker", new TaskOptionsPanel(new MouseTaskPanel(MouseEvent.MOUSE_CLICKED)));
-			window.addTab("Typer", new TaskOptionsPanel(new TextTypeTaskPanel()));
-			window.addTab("Robot", new TaskOptionsPanel(new RobotPanel()));
+			window.addTab("Clicker", new TaskOptionsPanel(new MouseTaskPanel(MouseEvent.MOUSE_CLICKED)), KeyEvent.VK_C);
+			window.addTab("Typer", new TaskOptionsPanel(new TextTypeTaskPanel()), KeyEvent.VK_T);
+			window.addTab("Robot", new TaskOptionsPanel(new RobotPanel()), KeyEvent.VK_R);
 			window.pack();
 			window.setVisible(true);
 		});

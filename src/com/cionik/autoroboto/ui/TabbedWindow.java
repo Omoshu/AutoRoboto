@@ -26,6 +26,11 @@ public class TabbedWindow {
 		tabbedPane.addTab(title, c);
 	}
 	
+	public void addTab(String title, Component c, int mnemonic) {
+		addTab(title, c);
+		tabbedPane.setMnemonicAt(tabbedPane.getTabCount() - 1, mnemonic);
+	}
+	
 	public void pack() {
 		frame.pack();
 	}

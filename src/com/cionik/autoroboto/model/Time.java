@@ -22,7 +22,7 @@ public class Time {
 	}
 	
 	public long convert(TimeUnit newUnit) {
-		return unit.convert(duration, newUnit);
+		return newUnit.convert(duration, unit);
 	}
 	
 }
