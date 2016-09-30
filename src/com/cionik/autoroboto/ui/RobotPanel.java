@@ -14,7 +14,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.cionik.autoroboto.task.MultiplexTask;
 import com.cionik.autoroboto.task.Task;
-import com.cionik.utils.model.Listener;
+import com.cionik.autoroboto.util.Listener;
 
 import net.miginfocom.swing.MigLayout;
 

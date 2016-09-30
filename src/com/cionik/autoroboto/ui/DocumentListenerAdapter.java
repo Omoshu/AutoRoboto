@@ -3,7 +3,7 @@ package com.cionik.autoroboto.ui;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.cionik.utils.model.Listener;
+import com.cionik.autoroboto.util.Listener;
 
 public class DocumentListenerAdapter implements DocumentListener {
 	

@@ -17,9 +17,9 @@ import javax.swing.event.DocumentListener;
 import com.cionik.autoroboto.model.MouseButton;
 import com.cionik.autoroboto.task.MouseTask;
 import com.cionik.autoroboto.task.Task;
-import com.cionik.utils.model.Listener;
-import com.cionik.utils.swing.JNumericTextField;
-import com.cionik.utils.swing.ScreenPointSelectDialog;
+import com.cionik.autoroboto.util.JNumericTextField;
+import com.cionik.autoroboto.util.Listener;
+import com.cionik.autoroboto.util.ScreenPointSelectDialog;
 
 import net.miginfocom.swing.MigLayout;
 

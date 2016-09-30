@@ -9,8 +9,8 @@ import javax.swing.JPanel;
 import com.cionik.autoroboto.model.Time;
 import com.cionik.autoroboto.task.DelayTask;
 import com.cionik.autoroboto.task.Task;
-import com.cionik.utils.model.Listener;
-import com.cionik.utils.swing.JNumericTextField;
+import com.cionik.autoroboto.util.JNumericTextField;
+import com.cionik.autoroboto.util.Listener;
 
 public class DelayTaskPanel extends JPanel implements TaskPanel {
 

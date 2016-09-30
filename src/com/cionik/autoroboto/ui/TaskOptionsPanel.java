@@ -23,9 +23,9 @@ import com.cionik.autoroboto.model.Time;
 import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TaskListener;
 import com.cionik.autoroboto.task.TaskScheduler;
-import com.cionik.utils.model.Listener;
-import com.cionik.utils.swing.JKeyStrokeTextField;
-import com.cionik.utils.swing.JNumericTextField;
+import com.cionik.autoroboto.util.JKeyStrokeTextField;
+import com.cionik.autoroboto.util.JNumericTextField;
+import com.cionik.autoroboto.util.Listener;
 
 import net.miginfocom.swing.MigLayout;
 

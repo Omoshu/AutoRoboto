@@ -3,7 +3,7 @@ package com.cionik.autoroboto.ui;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import com.cionik.utils.model.Listener;
+import com.cionik.autoroboto.util.Listener;
 
 public class ListDataListenerAdapter implements ListDataListener {
 	

@@ -8,8 +8,8 @@ import javax.swing.JPanel;
 
 import com.cionik.autoroboto.task.KeyTask;
 import com.cionik.autoroboto.task.Task;
-import com.cionik.utils.model.Listener;
-import com.cionik.utils.swing.JKeyCodeTextField;
+import com.cionik.autoroboto.util.JKeyCodeTextField;
+import com.cionik.autoroboto.util.Listener;
 
 import net.miginfocom.swing.MigLayout;
 

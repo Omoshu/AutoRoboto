@@ -3,7 +3,7 @@ package com.cionik.autoroboto.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.cionik.utils.model.Listener;
+import com.cionik.autoroboto.util.Listener;
 
 public class ActionListenerAdapter implements ActionListener {
 	

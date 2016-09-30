@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.cionik.autoroboto.model.Time;
-import com.cionik.utils.model.Listenable;
+import com.cionik.autoroboto.util.Listenable;
 
 public class TaskScheduler extends Listenable<TaskListener> {
 	

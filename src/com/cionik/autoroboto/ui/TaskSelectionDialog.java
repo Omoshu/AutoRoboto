@@ -14,8 +14,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.cionik.autoroboto.task.Task;
-import com.cionik.utils.model.Listener;
-import com.cionik.utils.swing.SwingUtils;
+import com.cionik.autoroboto.util.Listener;
+import com.cionik.autoroboto.util.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
 

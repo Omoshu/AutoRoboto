@@ -18,7 +18,7 @@ import com.cionik.autoroboto.ui.RobotPanel;
 import com.cionik.autoroboto.ui.TabbedWindow;
 import com.cionik.autoroboto.ui.TaskOptionsPanel;
 import com.cionik.autoroboto.ui.TextTypeTaskPanel;
-import com.cionik.utils.swing.MessageDialog;
+import com.cionik.autoroboto.util.MessageDialog;
 
 public class Initialize {
 	
