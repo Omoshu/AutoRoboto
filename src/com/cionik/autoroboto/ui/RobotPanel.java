@@ -13,7 +13,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.cionik.autoroboto.task.MultiplexTask;
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.util.Listener;
 
 import net.miginfocom.swing.MigLayout;
@@ -22,12 +21,9 @@ public class RobotPanel extends JPanel implements TaskPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private JList<Task> taskList = new JList<Task>(new DefaultListModel<Task>());
-	
+	private JList<Runnable> taskList = new JList<Runnable>(new DefaultListModel<Runnable>());
 	private JScrollPane taskListScrollPane = new JScrollPane(taskList);
-	
 	private JButton addButton = new JButton("Add...");
-	
 	private JButton removeButton = new JButton("Remove");
 	
 	public RobotPanel() {
@@ -44,9 +40,9 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Task getTask() {
-		ListModel<Task> model = taskList.getModel();
-		Task[] tasks = new Task[model.getSize()];
+	public Runnable getTask() {
+		ListModel<Runnable> model = taskList.getModel();
+		Runnable[] tasks = new Runnable[model.getSize()];
 		for (int i = 0; i < tasks.length; i++) {
 			tasks[i] = model.getElementAt(i);
 		}
@@ -90,9 +86,9 @@ public class RobotPanel extends JPanel implements TaskPanel {
 		public void actionPerformed(ActionEvent e) {
 			TaskSelectionDialog dialog = new TaskSelectionDialog();
 			dialog.show();
-			Task task = dialog.getTask();
+			Runnable task = dialog.getTask();
 			if (task != null) {
-				((DefaultListModel<Task>) taskList.getModel()).addElement(task);
+				((DefaultListModel<Runnable>) taskList.getModel()).addElement(task);
 			}
 		}
 		
@@ -104,7 +100,7 @@ public class RobotPanel extends JPanel implements TaskPanel {
 		public void actionPerformed(ActionEvent e) {
 			int index = taskList.getSelectedIndex();
 			if (index != -1) {
-				((DefaultListModel<Task>) taskList.getModel()).remove(index);
+				((DefaultListModel<Runnable>) taskList.getModel()).remove(index);
 			}
 		}
 		

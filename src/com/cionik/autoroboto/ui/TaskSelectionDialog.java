@@ -13,7 +13,6 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.util.Listener;
 import com.cionik.autoroboto.util.SwingUtils;
 
@@ -22,24 +21,15 @@ import net.miginfocom.swing.MigLayout;
 public class TaskSelectionDialog {
 	
 	private JDialog dialog = new JDialog((Frame) null, true);
-	
 	private JList<String> taskList = new JList<String>();
-	
 	private JScrollPane taskListScrollPane = new JScrollPane(taskList);
-	
 	private JButton backButton = new JButton("Back");
-	
 	private JButton nextButton = new JButton("Next");
-	
 	private JButton finishButton = new JButton("Finish");
-	
 	private JButton cancelButton = new JButton("Cancel");
-	
 	private Listener<Void> checkInputListener = new CheckInputListener();
-	
 	private TaskPanel taskPanel;
-	
-	private Task task;
+	private Runnable task;
 	
 	public TaskSelectionDialog() {
 		initComponents();
@@ -51,7 +41,7 @@ public class TaskSelectionDialog {
 		dialog.setVisible(true);
 	}
 	
-	public Task getTask() {
+	public Runnable getTask() {
 		return task;
 	}
 	

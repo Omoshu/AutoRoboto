@@ -7,14 +7,11 @@ import java.awt.event.MouseEvent;
 
 import com.cionik.autoroboto.model.MouseButton;
 
-public class MouseTask implements Task {
+public class MouseTask implements Runnable {
 	
 	private Robot robot;
-	
 	private MouseButton button;
-	
 	private Point point;
-	
 	private int eventType;
 	
 	public MouseTask(MouseButton button, Point point, int eventType) throws AWTException {
@@ -32,7 +29,7 @@ public class MouseTask implements Task {
 	}
 
 	@Override
-	public void execute() {
+	public void run() {
 		if (point != null) {
 			robot.mouseMove(point.x, point.y);
 		}

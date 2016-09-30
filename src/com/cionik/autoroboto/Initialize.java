@@ -36,13 +36,18 @@ public class Initialize {
 			MessageDialog.show(null, true, "Error", "Some features are not available for your operating system.", "autoRoboto.nativeHook");
 		}
 		
-		EventQueue.invokeLater(() -> {
-			TabbedWindow window = new TabbedWindow("AutoRoboto");
-			window.addTab("Clicker", new TaskOptionsPanel(new MouseTaskPanel(MouseEvent.MOUSE_CLICKED)), KeyEvent.VK_C);
-			window.addTab("Typer", new TaskOptionsPanel(new TextTypeTaskPanel()), KeyEvent.VK_T);
-			window.addTab("Robot", new TaskOptionsPanel(new RobotPanel()), KeyEvent.VK_R);
-			window.pack();
-			window.setVisible(true);
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				TabbedWindow window = new TabbedWindow("AutoRoboto");
+				window.addTab("Clicker", new TaskOptionsPanel(new MouseTaskPanel(MouseEvent.MOUSE_CLICKED)), KeyEvent.VK_C);
+				window.addTab("Typer", new TaskOptionsPanel(new TextTypeTaskPanel()), KeyEvent.VK_T);
+				window.addTab("Robot", new TaskOptionsPanel(new RobotPanel()), KeyEvent.VK_R);
+				window.pack();
+				window.setVisible(true);
+			}
+			
 		});
 	}
 	

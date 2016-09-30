@@ -7,14 +7,11 @@ import java.util.concurrent.TimeUnit;
 
 import com.cionik.autoroboto.model.Time;
 
-public class TextTypeTask implements Task {
+public class TextTypeTask implements Runnable {
 	
 	private Robot robot;
-	
 	private String text;
-	
 	private Time characterDelay;
-	
 	private long characterDelayMillis;
 	
 	public TextTypeTask(String text, Time characterDelay) throws AWTException {
@@ -26,7 +23,7 @@ public class TextTypeTask implements Task {
 	}
 
 	@Override
-	public void execute() {
+	public void run() {
 		char[] charArray = text.toCharArray();
 		for (int i = 0; i < charArray.length; i++) {
 			char c = charArray[i];

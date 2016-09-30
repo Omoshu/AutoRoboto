@@ -12,16 +12,14 @@ import com.cionik.autoroboto.util.Listenable;
 public class TaskScheduler extends Listenable<TaskListener> {
 	
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	
-	private AtomicBoolean isSkipped = new AtomicBoolean();
-	
+	private AtomicBoolean skipped = new AtomicBoolean();
 	private Future<?> future;
 	
-	public void schedule(Task task, Time initialDelay, Time delay, int iterations) {
+	public void schedule(Runnable task, Time initialDelay, Time delay, int iterations) {
 		if (future == null || future.isDone()) {
 			notifyStartListeners();
-			isSkipped.set(false);
-			future = executor.scheduleWithFixedDelay(new TaskRunnable(task, iterations),
+			skipped.set(false);
+			future = executor.scheduleWithFixedDelay(new TaskTimer(task, iterations),
 					initialDelay.convert(TimeUnit.MILLISECONDS), delay.convert(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS);
 		}
 	}
@@ -35,7 +33,7 @@ public class TaskScheduler extends Listenable<TaskListener> {
 	}
 	
 	public void skip() {
-		isSkipped.set(true);
+		skipped.set(true);
 	}
 	
 	public boolean isRunning() {
@@ -54,21 +52,20 @@ public class TaskScheduler extends Listenable<TaskListener> {
 		}
 	}
 	
-	private class TaskRunnable implements Runnable {
+	private class TaskTimer implements Runnable {
 		
-		private Task task;
-		
+		private Runnable task;
 		private int iterations;
 		
-		public TaskRunnable(Task task, int iterations) {
+		public TaskTimer(Runnable task, int iterations) {
 			this.task = task;
 			this.iterations = iterations;
 		}
 
 		@Override
 		public void run() {
-			if (!isSkipped.getAndSet(false)) {
-				task.execute();
+			if (!skipped.getAndSet(false)) {
+				task.run();
 				
 				if (iterations != -1 && --iterations == 0) {
 					shutdown();

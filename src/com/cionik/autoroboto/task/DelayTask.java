@@ -4,10 +4,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.cionik.autoroboto.model.Time;
 
-public class DelayTask implements Task {
+public class DelayTask implements Runnable {
 	
 	private Time delay;
-	
 	private long delayMillis;
 	
 	public DelayTask(Time delay) {
@@ -16,7 +15,7 @@ public class DelayTask implements Task {
 	}
 
 	@Override
-	public void execute() {
+	public void run() {
 		try {
 			Thread.sleep(delayMillis);
 		} catch (InterruptedException e) {

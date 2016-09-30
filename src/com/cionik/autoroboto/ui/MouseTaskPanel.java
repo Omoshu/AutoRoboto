@@ -16,7 +16,6 @@ import javax.swing.event.DocumentListener;
 
 import com.cionik.autoroboto.model.MouseButton;
 import com.cionik.autoroboto.task.MouseTask;
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
 import com.cionik.autoroboto.util.ScreenPointSelectDialog;
@@ -28,15 +27,10 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JComboBox<MouseButton> mouseButtonComboBox = new JComboBox<MouseButton>(MouseButton.values());
-	
 	private JCheckBox currentMouseLocationCheckBox = new JCheckBox("Click at Current Mouse Location");
-	
 	private JNumericTextField xTextField = new JNumericTextField(0);
-	
 	private JNumericTextField yTextField = new JNumericTextField(0);
-	
 	private JButton setPointButton = new JButton("Set Point");
-	
 	private int eventType;
 	
 	public MouseTaskPanel(int eventType) {
@@ -75,7 +69,7 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 	}
 	
 	@Override
-	public Task getTask() {
+	public Runnable getTask() {
 		try {
 			return new MouseTask(getMouseButton(), isCurrentMouseLocation() ? null : getPoint(), eventType);
 		} catch (AWTException e) {

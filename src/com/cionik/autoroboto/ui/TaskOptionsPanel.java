@@ -20,7 +20,6 @@ import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseMotionListener;
 
 import com.cionik.autoroboto.model.Time;
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TaskListener;
 import com.cionik.autoroboto.task.TaskScheduler;
 import com.cionik.autoroboto.util.JKeyStrokeTextField;
@@ -34,31 +33,18 @@ public class TaskOptionsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JCheckBox pauseCheckBox = new JCheckBox("Pause on Mouse Move");
-	
 	private JCheckBox infiniteCheckBox = new JCheckBox("Infinite");
-	
 	private JNumericTextField delayTextField = new JNumericTextField(1000);
-	
 	private JNumericTextField initialDelayTextField = new JNumericTextField(0);
-	
 	private JNumericTextField iterationsTextField = new JNumericTextField(0);
-	
 	private JComboBox<TimeUnit> delayComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
-	
 	private JComboBox<TimeUnit> initialDelayComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
-	
 	private JKeyStrokeTextField startStopKeyTextField = new JKeyStrokeTextField();
-	
 	private JButton clearButton = new JButton("Clear");
-	
 	private JButton startButton = new JButton("Start");
-	
 	private JButton stopButton = new JButton("Stop");
-	
 	private TaskScheduler scheduler = new TaskScheduler();
-	
 	private NativeMouseMotionListener skipListener;
-	
 	private TaskPanel taskPanel;
 	
 	public TaskOptionsPanel(TaskPanel taskPanel) {
@@ -140,7 +126,7 @@ public class TaskOptionsPanel extends JPanel {
 	}
 	
 	private void start() {
-		Task task = taskPanel.getTask();
+		Runnable task = taskPanel.getTask();
 		if (task != null) {
 			Time initialDelay = new Time(initialDelayTextField.getValue(0), (TimeUnit) initialDelayComboBox.getSelectedItem());
 			Time delay = new Time(delayTextField.getValue(0), (TimeUnit) delayComboBox.getSelectedItem());

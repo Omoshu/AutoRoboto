@@ -7,7 +7,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.cionik.autoroboto.task.KeyTask;
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.util.JKeyCodeTextField;
 import com.cionik.autoroboto.util.Listener;
 
@@ -18,7 +17,6 @@ public class KeyTaskPanel extends JPanel implements TaskPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JKeyCodeTextField keyTextField = new JKeyCodeTextField(5);
-	
 	private int eventType;
 	
 	public KeyTaskPanel(int eventType) {
@@ -45,7 +43,7 @@ public class KeyTaskPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Task getTask() {
+	public Runnable getTask() {
 		try {
 			return new KeyTask(keyTextField.getKeyCode(), eventType);
 		} catch (AWTException e) {

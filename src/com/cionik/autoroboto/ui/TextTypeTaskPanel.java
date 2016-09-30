@@ -10,7 +10,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentListener;
 
 import com.cionik.autoroboto.model.Time;
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TextTypeTask;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
@@ -22,9 +21,7 @@ public class TextTypeTaskPanel extends JPanel implements TaskPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JTextField textField = new JTextField();
-	
 	private JNumericTextField characterDelayTextField = new JNumericTextField(0);
-	
 	private JComboBox<TimeUnit> characterDelayComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
 	
 	public TextTypeTaskPanel() {
@@ -64,7 +61,7 @@ public class TextTypeTaskPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Task getTask() {
+	public Runnable getTask() {
 		try {
 			return new TextTypeTask(getText(), getCharacterDelay());
 		} catch (AWTException e) {

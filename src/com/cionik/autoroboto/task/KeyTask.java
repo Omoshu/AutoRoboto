@@ -4,12 +4,10 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
-public class KeyTask implements Task {
+public class KeyTask implements Runnable {
 	
 	private Robot robot;
-	
 	private int keyCode;
-	
 	private int eventType;
 	
 	public KeyTask(int keyCode, int eventType) throws AWTException {
@@ -26,7 +24,7 @@ public class KeyTask implements Task {
 	}
 
 	@Override
-	public void execute() {
+	public void run() {
 		if (eventType == KeyEvent.KEY_TYPED || eventType == KeyEvent.KEY_PRESSED) {
 			robot.keyPress(keyCode);
 		}

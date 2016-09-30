@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 
 import com.cionik.autoroboto.model.Time;
 import com.cionik.autoroboto.task.DelayTask;
-import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
 
@@ -17,7 +16,6 @@ public class DelayTaskPanel extends JPanel implements TaskPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JNumericTextField delayTextField = new JNumericTextField(0, 5);
-	
 	private JComboBox<TimeUnit> timeUnitComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
 	
 	public DelayTaskPanel() {
@@ -41,7 +39,7 @@ public class DelayTaskPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Task getTask() {
+	public Runnable getTask() {
 		return new DelayTask(new Time(delayTextField.getValue(), (TimeUnit) timeUnitComboBox.getSelectedItem()));
 	}
 
