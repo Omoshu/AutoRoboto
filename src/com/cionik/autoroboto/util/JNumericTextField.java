@@ -36,7 +36,9 @@ public class JNumericTextField extends JTextField {
 	}
 	
 	public void setValue(int value) {
-		Condition.checkArgument(value >= 0, "value must be >= 0");
+		if (value < 0) {
+			throw new IllegalArgumentException("value cannot be negative");
+		}
 		super.setText(Integer.toString(value));
 	}
 	

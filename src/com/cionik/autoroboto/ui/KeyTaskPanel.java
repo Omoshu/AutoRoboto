@@ -1,7 +1,6 @@
 package com.cionik.autoroboto.ui;
 
 import java.awt.AWTException;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -9,6 +8,7 @@ import javax.swing.JPanel;
 import com.cionik.autoroboto.task.KeyTask;
 import com.cionik.autoroboto.util.JKeyCodeTextField;
 import com.cionik.autoroboto.util.Listener;
+import com.cionik.autoroboto.util.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -17,16 +17,14 @@ public class KeyTaskPanel extends JPanel implements TaskPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JKeyCodeTextField keyTextField = new JKeyCodeTextField(5);
-	private int eventType;
+	private int eventId;
 	
-	public KeyTaskPanel(int eventType) {
-		if (eventType != KeyEvent.KEY_TYPED &&
-			eventType != KeyEvent.KEY_PRESSED &&
-			eventType != KeyEvent.KEY_RELEASED) {
-			throw new IllegalArgumentException("invalid eventType");
-		}
+	public KeyTaskPanel(int eventId) {
+		super();
 		
-		this.eventType = eventType;
+		SwingUtils.checkKeyEventId(eventId);
+		
+		this.eventId = eventId;
 		
 		layoutComponents();
 	}
@@ -45,7 +43,7 @@ public class KeyTaskPanel extends JPanel implements TaskPanel {
 	@Override
 	public Runnable getTask() {
 		try {
-			return new KeyTask(keyTextField.getKeyCode(), eventType);
+			return new KeyTask(keyTextField.getKeyCode(), eventId);
 		} catch (AWTException e) {
 			return null;
 		}

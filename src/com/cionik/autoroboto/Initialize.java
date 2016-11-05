@@ -11,7 +11,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
-import org.lumines.laf.ui.LuminesLookAndFeel;
 
 import com.cionik.autoroboto.ui.MouseTaskPanel;
 import com.cionik.autoroboto.ui.RobotPanel;
@@ -24,9 +23,9 @@ public class Initialize {
 	
 	public static void main(String[] args) {
 		try {
-			UIManager.setLookAndFeel(new LuminesLookAndFeel());
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			//Ignore
 		}
 		
 		Logger.getLogger(GlobalScreen.class.getPackage().getName()).setLevel(Level.OFF);

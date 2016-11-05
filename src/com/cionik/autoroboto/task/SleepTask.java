@@ -4,12 +4,12 @@ import java.util.concurrent.TimeUnit;
 
 import com.cionik.autoroboto.model.Time;
 
-public class DelayTask implements Runnable {
+public class SleepTask implements Runnable {
 	
 	private Time delay;
 	private long delayMillis;
 	
-	public DelayTask(Time delay) {
+	public SleepTask(Time delay) {
 		this.delay = delay;
 		delayMillis = delay.convert(TimeUnit.MILLISECONDS);
 	}

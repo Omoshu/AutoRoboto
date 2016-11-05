@@ -7,18 +7,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.cionik.autoroboto.model.Time;
-import com.cionik.autoroboto.task.DelayTask;
+import com.cionik.autoroboto.task.SleepTask;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
 
-public class DelayTaskPanel extends JPanel implements TaskPanel {
+public class SleepTaskPanel extends JPanel implements TaskPanel {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JNumericTextField delayTextField = new JNumericTextField(0, 5);
 	private JComboBox<TimeUnit> timeUnitComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
 	
-	public DelayTaskPanel() {
+	public SleepTaskPanel() {
 		initComponents();
 		layoutComponents();
 	}
@@ -28,7 +28,7 @@ public class DelayTaskPanel extends JPanel implements TaskPanel {
 	}
 	
 	private void layoutComponents() {
-		add(new JLabel("Delay: "));
+		add(new JLabel("Sleep: "));
 		add(delayTextField);
 		add(timeUnitComboBox);
 	}
@@ -40,7 +40,7 @@ public class DelayTaskPanel extends JPanel implements TaskPanel {
 
 	@Override
 	public Runnable getTask() {
-		return new DelayTask(new Time(delayTextField.getValue(), (TimeUnit) timeUnitComboBox.getSelectedItem()));
+		return new SleepTask(new Time((TimeUnit) timeUnitComboBox.getSelectedItem(), delayTextField.getValue()));
 	}
 
 	@Override

@@ -8,7 +8,7 @@ public enum MouseButton {
 	RIGHT(InputEvent.BUTTON2_DOWN_MASK),
 	MIDDLE(InputEvent.BUTTON3_DOWN_MASK);
 	
-	private int mask;
+	private final int mask;
 	
 	private MouseButton(int mask) {
 		this.mask = mask;

@@ -8,7 +8,6 @@ import javax.swing.JTabbedPane;
 public class TabbedWindow {
 	
 	private JFrame frame = new JFrame();
-	
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 	
 	public TabbedWindow(String title) {

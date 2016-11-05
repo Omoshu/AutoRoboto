@@ -6,24 +6,24 @@ import java.awt.Robot;
 import java.awt.event.MouseEvent;
 
 import com.cionik.autoroboto.model.MouseButton;
+import com.cionik.autoroboto.util.SwingUtils;
 
 public class MouseTask implements Runnable {
 	
 	private Robot robot;
 	private MouseButton button;
 	private Point point;
-	private int eventType;
+	private int eventId;
 	
-	public MouseTask(MouseButton button, Point point, int eventType) throws AWTException {
-		if (eventType != MouseEvent.MOUSE_CLICKED &&
-			eventType != MouseEvent.MOUSE_PRESSED &&
-			eventType != MouseEvent.MOUSE_RELEASED) {
-			throw new IllegalArgumentException("invalid eventType");
+	public MouseTask(MouseButton button, Point point, int eventId) throws AWTException {
+		if (button == null) {
+			throw new IllegalArgumentException("button cannot be null");
 		}
+		SwingUtils.checkMouseEventId(eventId);
 		
 		this.button = button;
 		this.point = point;
-		this.eventType = eventType;
+		this.eventId = eventId;
 		
 		robot = new Robot();
 	}
@@ -34,11 +34,11 @@ public class MouseTask implements Runnable {
 			robot.mouseMove(point.x, point.y);
 		}
 		
-		if (eventType == MouseEvent.MOUSE_CLICKED || eventType == MouseEvent.MOUSE_PRESSED) {
+		if (eventId == MouseEvent.MOUSE_CLICKED || eventId == MouseEvent.MOUSE_PRESSED) {
 			robot.mousePress(button.getMask());
 		}
 		
-		if (eventType == MouseEvent.MOUSE_CLICKED || eventType == MouseEvent.MOUSE_RELEASED) {
+		if (eventId == MouseEvent.MOUSE_CLICKED || eventId == MouseEvent.MOUSE_RELEASED) {
 			robot.mouseRelease(button.getMask());
 		}
 	}
@@ -47,11 +47,11 @@ public class MouseTask implements Runnable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Mouse ");
-		if (eventType == MouseEvent.MOUSE_CLICKED) {
+		if (eventId == MouseEvent.MOUSE_CLICKED) {
 			sb.append("Click");
-		} else if (eventType == MouseEvent.MOUSE_PRESSED) {
+		} else if (eventId == MouseEvent.MOUSE_PRESSED) {
 			sb.append("Press");
-		} else if (eventType == MouseEvent.MOUSE_RELEASED) {
+		} else if (eventId == MouseEvent.MOUSE_RELEASED) {
 			sb.append("Release");
 		}
 		sb.append(": Point[");

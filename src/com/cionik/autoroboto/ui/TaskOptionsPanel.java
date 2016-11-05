@@ -113,9 +113,9 @@ public class TaskOptionsPanel extends JPanel {
 		add(delayTextField);
 		add(delayComboBox, "wrap");
 		add(new JSeparator(), "span, growx, wrap");
-		add(infiniteCheckBox, "wrap");
 		add(new JLabel("Iterations: "));
-		add(iterationsTextField, "wrap");
+		add(iterationsTextField);
+		add(infiniteCheckBox, "wrap");
 		add(new JSeparator(), "span, growx, wrap");
 		add(new JLabel("Key to Start & Stop: "));
 		add(startStopKeyTextField);
@@ -128,8 +128,8 @@ public class TaskOptionsPanel extends JPanel {
 	private void start() {
 		Runnable task = taskPanel.getTask();
 		if (task != null) {
-			Time initialDelay = new Time(initialDelayTextField.getValue(0), (TimeUnit) initialDelayComboBox.getSelectedItem());
-			Time delay = new Time(delayTextField.getValue(0), (TimeUnit) delayComboBox.getSelectedItem());
+			Time initialDelay = new Time((TimeUnit) initialDelayComboBox.getSelectedItem(), initialDelayTextField.getValue(0));
+			Time delay = new Time((TimeUnit) delayComboBox.getSelectedItem(), delayTextField.getValue(0));
 			int iterations = infiniteCheckBox.isSelected() ? -1 : iterationsTextField.getValue();
 			scheduler.schedule(task, initialDelay, delay, iterations);
 		}

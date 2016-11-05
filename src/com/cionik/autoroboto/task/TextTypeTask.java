@@ -15,6 +15,12 @@ public class TextTypeTask implements Runnable {
 	private long characterDelayMillis;
 	
 	public TextTypeTask(String text, Time characterDelay) throws AWTException {
+		if (text == null) {
+			throw new IllegalArgumentException("text cannot be null");
+		} else if (characterDelay == null) {
+			throw new IllegalArgumentException("characterDelay cannot be null");
+		}
+		
 		this.text = text;
 		this.characterDelay = characterDelay;
 		characterDelayMillis = characterDelay.convert(TimeUnit.MILLISECONDS);

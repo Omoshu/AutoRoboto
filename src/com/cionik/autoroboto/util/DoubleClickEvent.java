@@ -2,18 +2,17 @@ package com.cionik.autoroboto.util;
 
 import java.awt.Component;
 
-public class DoubleClickEvent<C extends Component, T> {
+public class DoubleClickEvent<S extends Component, T> {
 	
-	private C source;
-	
+	private S source;
 	private T item;
 	
-	public DoubleClickEvent(C source, T item) {
+	public DoubleClickEvent(S source, T item) {
 		this.source = source;
 		this.item = item;
 	}
 	
-	public C getSource() {
+	public S getSource() {
 		return source;
 	}
 	

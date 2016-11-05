@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.cionik.autoroboto.util.DoubleClickEvent;
 import com.cionik.autoroboto.util.Listener;
 import com.cionik.autoroboto.util.SwingUtils;
 
@@ -54,7 +55,7 @@ public class TaskSelectionDialog {
 			"Key Type",
 			"Key Press",
 			"Key Release",
-			"Delay"
+			"Sleep"
 		});
 		
 		SwingUtils.equatePreferredSize(backButton, nextButton);
@@ -65,6 +66,7 @@ public class TaskSelectionDialog {
 	}
 	
 	private void installListeners() {
+		SwingUtils.addDoubleClickListenerr(taskList, new TaskDoubleClickListener());
 		taskList.addListSelectionListener(new NextSelectionListener());
 		backButton.addActionListener(new BackActionListener());
 		nextButton.addActionListener(new NextActionListener());
@@ -101,7 +103,7 @@ public class TaskSelectionDialog {
 			case "Key Release":
 				return new KeyTaskPanel(KeyEvent.KEY_RELEASED);
 			case "Delay":
-				return new DelayTaskPanel();
+				return new SleepTaskPanel();
 			default:
 				return null;
 		}
@@ -113,6 +115,38 @@ public class TaskSelectionDialog {
 	
 	private void checkFinishButton() {
 		finishButton.setEnabled(taskPanel != null && taskPanel.hasValidInput());
+	}
+	
+	private void next(String taskName) {
+		if (taskName != null) {
+			taskPanel = createPanel(taskName);
+			taskPanel.addInputChangeListener(checkInputListener);
+			dialog.getContentPane().remove(0);
+			dialog.getContentPane().add(taskPanel.getPanel(), "span, align center, wrap", 0);
+			nextButton.setEnabled(false);
+			backButton.setEnabled(true);
+			dialog.pack();
+			dialog.revalidate();
+			dialog.repaint();
+		}
+	}
+	
+	private class TaskDoubleClickListener implements Listener<DoubleClickEvent<JList<String>, String>> {
+
+		@Override
+		public void handleEvent(DoubleClickEvent<JList<String>, String> e) {
+			next(e.getItem());
+		}
+		
+	}
+	
+	private class NextSelectionListener implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			checkNextButton();
+		}
+		
 	}
 	
 	private class BackActionListener implements ActionListener {
@@ -135,18 +169,7 @@ public class TaskSelectionDialog {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String taskName = taskList.getSelectedValue();
-			if (taskName != null) {
-				taskPanel = createPanel(taskName);
-				taskPanel.addInputChangeListener(checkInputListener);
-				dialog.getContentPane().remove(0);
-				dialog.getContentPane().add(taskPanel.getPanel(), "span, align center, wrap", 0);
-				nextButton.setEnabled(false);
-				backButton.setEnabled(true);
-				dialog.pack();
-				dialog.revalidate();
-				dialog.repaint();
-			}
+			next(taskList.getSelectedValue());
 		}
 		
 	}
@@ -168,15 +191,6 @@ public class TaskSelectionDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			dialog.dispose();
-		}
-		
-	}
-	
-	private class NextSelectionListener implements ListSelectionListener {
-
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			checkNextButton();
 		}
 		
 	}

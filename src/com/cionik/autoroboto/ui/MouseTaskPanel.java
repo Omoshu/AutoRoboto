@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -19,6 +18,7 @@ import com.cionik.autoroboto.task.MouseTask;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
 import com.cionik.autoroboto.util.ScreenPointSelectDialog;
+import com.cionik.autoroboto.util.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -31,18 +31,14 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 	private JNumericTextField xTextField = new JNumericTextField(0);
 	private JNumericTextField yTextField = new JNumericTextField(0);
 	private JButton setPointButton = new JButton("Set Point");
-	private int eventType;
+	private int eventId;
 	
-	public MouseTaskPanel(int eventType) {
+	public MouseTaskPanel(int eventId) {
 		super();
 		
-		if (eventType != MouseEvent.MOUSE_CLICKED &&
-			eventType != MouseEvent.MOUSE_PRESSED &&
-			eventType != MouseEvent.MOUSE_RELEASED) {
-			throw new IllegalArgumentException("invalid eventType");
-		}
+		SwingUtils.checkMouseEventId(eventId);
 		
-		this.eventType = eventType;
+		this.eventId = eventId;
 		
 		initComponents();
 		installListeners();
@@ -71,7 +67,7 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 	@Override
 	public Runnable getTask() {
 		try {
-			return new MouseTask(getMouseButton(), isCurrentMouseLocation() ? null : getPoint(), eventType);
+			return new MouseTask(getMouseButton(), isCurrentMouseLocation() ? null : getPoint(), eventId);
 		} catch (AWTException e) {
 			return null;
 		}

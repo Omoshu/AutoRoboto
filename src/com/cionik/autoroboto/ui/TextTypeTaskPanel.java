@@ -52,7 +52,7 @@ public class TextTypeTaskPanel extends JPanel implements TaskPanel {
 	
 	public Time getCharacterDelay() {
 		Integer delay = characterDelayTextField.getValue();
-		return delay == null ? null : new Time(delay, (TimeUnit) characterDelayComboBox.getSelectedItem());
+		return delay == null ? null : new Time((TimeUnit) characterDelayComboBox.getSelectedItem(), delay);
 	}
 
 	@Override

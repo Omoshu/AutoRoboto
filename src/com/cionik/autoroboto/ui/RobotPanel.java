@@ -12,7 +12,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.cionik.autoroboto.task.MultiplexTask;
+import com.cionik.autoroboto.task.TaskComposite;
 import com.cionik.autoroboto.util.Listener;
 
 import net.miginfocom.swing.MigLayout;
@@ -46,7 +46,7 @@ public class RobotPanel extends JPanel implements TaskPanel {
 		for (int i = 0; i < tasks.length; i++) {
 			tasks[i] = model.getElementAt(i);
 		}
-		return new MultiplexTask(tasks);
+		return new TaskComposite(tasks);
 	}
 
 	@Override
@@ -64,9 +64,9 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	}
 	
 	private void addListeners() {
+		taskList.addListSelectionListener(new RemoveSelectionListener());
 		addButton.addActionListener(new AddActionListener());
 		removeButton.addActionListener(new RemoveActionListener());
-		taskList.addListSelectionListener(new RemoveSelectionListener());
 	}
 	
 	private void layoutComponents() {
@@ -78,6 +78,15 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	
 	private void checkRemoveButton() {
 		removeButton.setEnabled(taskList.getSelectedIndex() != -1);
+	}
+	
+	private class RemoveSelectionListener implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			checkRemoveButton();
+		}
+		
 	}
 	
 	private class AddActionListener implements ActionListener {
@@ -102,15 +111,6 @@ public class RobotPanel extends JPanel implements TaskPanel {
 			if (index != -1) {
 				((DefaultListModel<Runnable>) taskList.getModel()).remove(index);
 			}
-		}
-		
-	}
-	
-	private class RemoveSelectionListener implements ListSelectionListener {
-
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			checkRemoveButton();
 		}
 		
 	}

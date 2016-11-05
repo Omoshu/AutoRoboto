@@ -4,32 +4,30 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
+import com.cionik.autoroboto.util.SwingUtils;
+
 public class KeyTask implements Runnable {
 	
 	private Robot robot;
 	private int keyCode;
-	private int eventType;
+	private int eventId;
 	
-	public KeyTask(int keyCode, int eventType) throws AWTException {
-		if (eventType != KeyEvent.KEY_TYPED &&
-			eventType != KeyEvent.KEY_PRESSED &&
-			eventType != KeyEvent.KEY_RELEASED) {
-			throw new IllegalArgumentException("invalid eventType");
-		}
+	public KeyTask(int keyCode, int eventId) throws AWTException {
+		SwingUtils.checkKeyEventId(eventId);
 		
 		this.keyCode = keyCode;
-		this.eventType = eventType;
+		this.eventId = eventId;
 		
 		robot = new Robot();
 	}
 
 	@Override
 	public void run() {
-		if (eventType == KeyEvent.KEY_TYPED || eventType == KeyEvent.KEY_PRESSED) {
+		if (eventId == KeyEvent.KEY_TYPED || eventId == KeyEvent.KEY_PRESSED) {
 			robot.keyPress(keyCode);
 		}
 		
-		if (eventType == KeyEvent.KEY_TYPED || eventType == KeyEvent.KEY_RELEASED) {
+		if (eventId == KeyEvent.KEY_TYPED || eventId == KeyEvent.KEY_RELEASED) {
 			robot.keyRelease(keyCode);
 		}
 	}
@@ -38,11 +36,11 @@ public class KeyTask implements Runnable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Key ");
-		if (eventType == KeyEvent.KEY_TYPED) {
+		if (eventId == KeyEvent.KEY_TYPED) {
 			sb.append("Type");
-		} else if (eventType == KeyEvent.KEY_PRESSED) {
+		} else if (eventId == KeyEvent.KEY_PRESSED) {
 			sb.append("Press");
-		} else if (eventType == KeyEvent.KEY_RELEASED) {
+		} else if (eventId == KeyEvent.KEY_RELEASED) {
 			sb.append("Release");
 		}
 		sb.append(": Key[");
