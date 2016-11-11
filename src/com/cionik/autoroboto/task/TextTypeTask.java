@@ -6,8 +6,10 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 
 import com.cionik.autoroboto.model.Time;
+import com.cionik.autoroboto.ui.TaskPanel;
+import com.cionik.autoroboto.ui.TextTypeTaskPanel;
 
-public class TextTypeTask implements Runnable {
+public class TextTypeTask implements Task {
 	
 	private Robot robot;
 	private String text;
@@ -52,6 +54,11 @@ public class TextTypeTask implements Runnable {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public TaskPanel createPanel() {
+		return new TextTypeTaskPanel(text, characterDelay);
 	}
 	
 	@Override

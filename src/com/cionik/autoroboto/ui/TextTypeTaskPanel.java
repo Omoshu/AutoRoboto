@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentListener;
 
 import com.cionik.autoroboto.model.Time;
+import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TextTypeTask;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
@@ -24,14 +25,26 @@ public class TextTypeTaskPanel extends JPanel implements TaskPanel {
 	private JNumericTextField characterDelayTextField = new JNumericTextField(0);
 	private JComboBox<TimeUnit> characterDelayComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
 	
-	public TextTypeTaskPanel() {
+	public TextTypeTaskPanel(String text, Time characterDelay) {
 		super();
 		
-		initComponents();
+		initComponents(text, characterDelay);
 		layoutComponents();
 	}
 	
-	private void initComponents() {
+	public TextTypeTaskPanel() {
+		this(null, null);
+	}
+	
+	private void initComponents(String text, Time characterDelay) {
+		if (text != null) {
+			textField.setText(text);
+		}
+		if (characterDelay != null) {
+			characterDelayTextField.setValue((int) characterDelay.getDuration());
+			characterDelayComboBox.setSelectedItem(characterDelay.getUnit());
+		}
+		
 		characterDelayTextField.setColumns(7);
 		characterDelayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
 	}
@@ -61,7 +74,7 @@ public class TextTypeTaskPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Runnable getTask() {
+	public Task getTask() {
 		try {
 			return new TextTypeTask(getText(), getCharacterDelay());
 		} catch (AWTException e) {

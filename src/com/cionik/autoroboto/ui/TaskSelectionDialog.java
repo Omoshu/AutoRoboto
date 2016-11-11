@@ -3,8 +3,6 @@ package com.cionik.autoroboto.ui;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,6 +11,8 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.cionik.autoroboto.task.Task;
+import com.cionik.autoroboto.task.TaskType;
 import com.cionik.autoroboto.util.DoubleClickEvent;
 import com.cionik.autoroboto.util.Listener;
 import com.cionik.autoroboto.util.SwingUtils;
@@ -22,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
 public class TaskSelectionDialog {
 	
 	private JDialog dialog = new JDialog((Frame) null, true);
-	private JList<String> taskList = new JList<String>();
+	private JList<TaskType> taskList = new JList<TaskType>();
 	private JScrollPane taskListScrollPane = new JScrollPane(taskList);
 	private JButton backButton = new JButton("Back");
 	private JButton nextButton = new JButton("Next");
@@ -30,11 +30,11 @@ public class TaskSelectionDialog {
 	private JButton cancelButton = new JButton("Cancel");
 	private Listener<Void> checkInputListener = new CheckInputListener();
 	private TaskPanel taskPanel;
-	private Runnable task;
+	private Task task;
 	
-	public TaskSelectionDialog() {
-		initComponents();
-		installListeners();
+	public TaskSelectionDialog(TaskType[] taskTypes) {
+		addListeners();
+		initComponents(taskTypes);
 		layoutComponents();
 	}
 	
@@ -42,36 +42,27 @@ public class TaskSelectionDialog {
 		dialog.setVisible(true);
 	}
 	
-	public Runnable getTask() {
+	public Task getTask() {
 		return task;
 	}
 	
-	private void initComponents() {
-		taskList.setListData(new String[] {
-			"Mouse Click",
-			"Mouse Press",
-			"Mouse Release",
-			"Text Type",
-			"Key Type",
-			"Key Press",
-			"Key Release",
-			"Sleep"
-		});
-		
-		SwingUtils.equatePreferredSize(backButton, nextButton);
-		SwingUtils.equatePreferredSize(finishButton, cancelButton);
-		
-		checkNextButton();
-		checkFinishButton();
-	}
-	
-	private void installListeners() {
+	private void addListeners() {
 		SwingUtils.addDoubleClickListenerr(taskList, new TaskDoubleClickListener());
 		taskList.addListSelectionListener(new NextSelectionListener());
 		backButton.addActionListener(new BackActionListener());
 		nextButton.addActionListener(new NextActionListener());
 		finishButton.addActionListener(new FinishActionListener());
 		cancelButton.addActionListener(new CancelActionListener());
+	}
+	
+	private void initComponents(TaskType[] taskTypes) {
+		taskList.setListData(taskTypes);
+		
+		SwingUtils.equatePreferredSize(backButton, nextButton);
+		SwingUtils.equatePreferredSize(finishButton, cancelButton);
+		
+		checkNextButton();
+		checkFinishButton();
 	}
 	
 	private void layoutComponents() {
@@ -86,29 +77,6 @@ public class TaskSelectionDialog {
 		dialog.setLocationByPlatform(true);
 	}
 	
-	private TaskPanel createPanel(String name) {
-		switch (name) {
-			case "Mouse Click":
-				return new MouseTaskPanel(MouseEvent.MOUSE_CLICKED);
-			case "Mouse Press":
-				return new MouseTaskPanel(MouseEvent.MOUSE_PRESSED);
-			case "Mouse Release":
-				return new MouseTaskPanel(MouseEvent.MOUSE_RELEASED);
-			case "Text Type":
-				return new TextTypeTaskPanel();
-			case "Key Type":
-				return new KeyTaskPanel(KeyEvent.KEY_TYPED);
-			case "Key Press":
-				return new KeyTaskPanel(KeyEvent.KEY_PRESSED);
-			case "Key Release":
-				return new KeyTaskPanel(KeyEvent.KEY_RELEASED);
-			case "Delay":
-				return new SleepTaskPanel();
-			default:
-				return null;
-		}
-	}
-	
 	private void checkNextButton() {
 		nextButton.setEnabled(taskPanel == null && taskList.getSelectedIndex() != -1);
 	}
@@ -117,24 +85,25 @@ public class TaskSelectionDialog {
 		finishButton.setEnabled(taskPanel != null && taskPanel.hasValidInput());
 	}
 	
-	private void next(String taskName) {
-		if (taskName != null) {
-			taskPanel = createPanel(taskName);
+	private void next(TaskType taskType) {
+		if (taskType != null) {
+			taskPanel = taskType.createPanel();
 			taskPanel.addInputChangeListener(checkInputListener);
 			dialog.getContentPane().remove(0);
 			dialog.getContentPane().add(taskPanel.getPanel(), "span, align center, wrap", 0);
 			nextButton.setEnabled(false);
 			backButton.setEnabled(true);
+			checkFinishButton();
 			dialog.pack();
 			dialog.revalidate();
 			dialog.repaint();
 		}
 	}
 	
-	private class TaskDoubleClickListener implements Listener<DoubleClickEvent<JList<String>, String>> {
+	private class TaskDoubleClickListener implements Listener<DoubleClickEvent<JList<TaskType>, TaskType>> {
 
 		@Override
-		public void handleEvent(DoubleClickEvent<JList<String>, String> e) {
+		public void handleEvent(DoubleClickEvent<JList<TaskType>, TaskType> e) {
 			next(e.getItem());
 		}
 		

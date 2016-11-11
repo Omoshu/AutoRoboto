@@ -22,6 +22,11 @@ public class JKeyCodeTextField extends JKeyInputTextField {
 		return keyCode;
 	}
 	
+	public void setKeyCode(int keyCode) {
+		this.keyCode = keyCode;
+		setText(KeyEvent.getKeyText(keyCode));
+	}
+	
 	@Override
 	public void clear() {
 		super.clear();
@@ -37,8 +42,7 @@ public class JKeyCodeTextField extends JKeyInputTextField {
 		
 		@Override
 		public void keyReleased(KeyEvent e) {
-			keyCode = e.getKeyCode();
-			setText(KeyEvent.getKeyText(keyCode));
+			setKeyCode(e.getKeyCode());
 			getParent().requestFocusInWindow();
 		}
 		

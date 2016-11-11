@@ -3,29 +3,36 @@ package com.cionik.autoroboto.task;
 import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.Robot;
-import java.awt.event.MouseEvent;
 
 import com.cionik.autoroboto.model.MouseButton;
-import com.cionik.autoroboto.util.SwingUtils;
 
-public class MouseTask implements Runnable {
+public abstract class MouseTask implements Task {
 	
 	private Robot robot;
 	private MouseButton button;
 	private Point point;
-	private int eventId;
 	
-	public MouseTask(MouseButton button, Point point, int eventId) throws AWTException {
+	public MouseTask(MouseButton button, Point point) throws AWTException {
 		if (button == null) {
 			throw new IllegalArgumentException("button cannot be null");
 		}
-		SwingUtils.checkMouseEventId(eventId);
 		
 		this.button = button;
 		this.point = point;
-		this.eventId = eventId;
 		
 		robot = new Robot();
+	}
+	
+	public MouseButton getButton() {
+		return button;
+	}
+	
+	public Point getPoint() {
+		return point;
+	}
+	
+	protected Robot getRobot() {
+		return robot;
 	}
 
 	@Override
@@ -33,27 +40,13 @@ public class MouseTask implements Runnable {
 		if (point != null) {
 			robot.mouseMove(point.x, point.y);
 		}
-		
-		if (eventId == MouseEvent.MOUSE_CLICKED || eventId == MouseEvent.MOUSE_PRESSED) {
-			robot.mousePress(button.getMask());
-		}
-		
-		if (eventId == MouseEvent.MOUSE_CLICKED || eventId == MouseEvent.MOUSE_RELEASED) {
-			robot.mouseRelease(button.getMask());
-		}
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Mouse ");
-		if (eventId == MouseEvent.MOUSE_CLICKED) {
-			sb.append("Click");
-		} else if (eventId == MouseEvent.MOUSE_PRESSED) {
-			sb.append("Press");
-		} else if (eventId == MouseEvent.MOUSE_RELEASED) {
-			sb.append("Release");
-		}
+		sb.append(getName());
 		sb.append(": Point[");
 		if (point == null) {
 			sb.append("Mouse Location");
@@ -68,5 +61,7 @@ public class MouseTask implements Runnable {
 		sb.append("]");
 		return sb.toString();
 	}
+	
+	protected abstract String getName();
 	
 }

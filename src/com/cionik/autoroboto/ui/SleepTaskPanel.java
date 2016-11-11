@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import com.cionik.autoroboto.model.Time;
 import com.cionik.autoroboto.task.SleepTask;
+import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
 
@@ -18,12 +19,20 @@ public class SleepTaskPanel extends JPanel implements TaskPanel {
 	private JNumericTextField delayTextField = new JNumericTextField(0, 5);
 	private JComboBox<TimeUnit> timeUnitComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
 	
-	public SleepTaskPanel() {
-		initComponents();
+	public SleepTaskPanel(Time delay) {
+		initComponents(delay);
 		layoutComponents();
 	}
 	
-	private void initComponents() {
+	public SleepTaskPanel() {
+		this(null);
+	}
+	
+	private void initComponents(Time delay) {
+		if (delay != null) {
+			delayTextField.setValue((int) delay.getDuration());
+			timeUnitComboBox.setSelectedItem(delay.getUnit());
+		}
 		timeUnitComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
 	}
 	
@@ -39,7 +48,7 @@ public class SleepTaskPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Runnable getTask() {
+	public Task getTask() {
 		return new SleepTask(new Time((TimeUnit) timeUnitComboBox.getSelectedItem(), delayTextField.getValue()));
 	}
 

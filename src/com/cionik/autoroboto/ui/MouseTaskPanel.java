@@ -1,6 +1,5 @@
 package com.cionik.autoroboto.ui;
 
-import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,15 +13,13 @@ import javax.swing.JSeparator;
 import javax.swing.event.DocumentListener;
 
 import com.cionik.autoroboto.model.MouseButton;
-import com.cionik.autoroboto.task.MouseTask;
 import com.cionik.autoroboto.util.JNumericTextField;
 import com.cionik.autoroboto.util.Listener;
 import com.cionik.autoroboto.util.ScreenPointSelectDialog;
-import com.cionik.autoroboto.util.SwingUtils;
 
 import net.miginfocom.swing.MigLayout;
 
-public class MouseTaskPanel extends JPanel implements TaskPanel {
+public abstract class MouseTaskPanel extends JPanel implements TaskPanel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -31,18 +28,17 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 	private JNumericTextField xTextField = new JNumericTextField(0);
 	private JNumericTextField yTextField = new JNumericTextField(0);
 	private JButton setPointButton = new JButton("Set Point");
-	private int eventId;
 	
-	public MouseTaskPanel(int eventId) {
+	public MouseTaskPanel(MouseButton button, Point point) {
 		super();
 		
-		SwingUtils.checkMouseEventId(eventId);
-		
-		this.eventId = eventId;
-		
-		initComponents();
-		installListeners();
+		addListeners();
+		initComponents(button, point);
 		layoutComponents();
+	}
+	
+	public MouseTaskPanel() {
+		this(null, null);
 	}
 	
 	public MouseButton getMouseButton() {
@@ -65,15 +61,6 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 	}
 	
 	@Override
-	public Runnable getTask() {
-		try {
-			return new MouseTask(getMouseButton(), isCurrentMouseLocation() ? null : getPoint(), eventId);
-		} catch (AWTException e) {
-			return null;
-		}
-	}
-	
-	@Override
 	public JPanel getPanel() {
 		return this;
 	}
@@ -87,12 +74,22 @@ public class MouseTaskPanel extends JPanel implements TaskPanel {
 		yTextField.getDocument().addDocumentListener(documentListener);
 	}
 	
-	private void initComponents() {
+	private void initComponents(MouseButton button, Point point) {
+		if (button != null) {
+			mouseButtonComboBox.setSelectedItem(button);
+			if (point != null) {
+				xTextField.setValue(point.x);
+				yTextField.setValue(point.y);
+			} else {
+				currentMouseLocationCheckBox.setSelected(true);
+			}
+		}
+		
 		xTextField.setColumns(5);
 		yTextField.setColumns(5);
 	}
 	
-	private void installListeners() {
+	private void addListeners() {
 		currentMouseLocationCheckBox.addActionListener(new CurrentMouseLocationActionListener());
 		setPointButton.addActionListener(new SetPointActionListener());
 	}

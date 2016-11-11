@@ -12,7 +12,9 @@ import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TaskComposite;
+import com.cionik.autoroboto.task.TaskType;
 import com.cionik.autoroboto.util.Listener;
 
 import net.miginfocom.swing.MigLayout;
@@ -21,16 +23,20 @@ public class RobotPanel extends JPanel implements TaskPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private JList<Runnable> taskList = new JList<Runnable>(new DefaultListModel<Runnable>());
+	private JList<Task> taskList = new JList<Task>(new DefaultListModel<Task>());
 	private JScrollPane taskListScrollPane = new JScrollPane(taskList);
 	private JButton addButton = new JButton("Add...");
 	private JButton removeButton = new JButton("Remove");
 	
-	public RobotPanel() {
+	private TaskType[] taskTypes;
+	
+	public RobotPanel(TaskType[] taskTypes) {
 		super();
 		
-		initComponents();
+		this.taskTypes = taskTypes;
+		
 		addListeners();
+		initComponents();
 		layoutComponents();
 	}
 	
@@ -40,9 +46,9 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	}
 
 	@Override
-	public Runnable getTask() {
-		ListModel<Runnable> model = taskList.getModel();
-		Runnable[] tasks = new Runnable[model.getSize()];
+	public Task getTask() {
+		ListModel<Task> model = taskList.getModel();
+		Task[] tasks = new Task[model.getSize()];
 		for (int i = 0; i < tasks.length; i++) {
 			tasks[i] = model.getElementAt(i);
 		}
@@ -93,11 +99,11 @@ public class RobotPanel extends JPanel implements TaskPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			TaskSelectionDialog dialog = new TaskSelectionDialog();
+			TaskSelectionDialog dialog = new TaskSelectionDialog(taskTypes);
 			dialog.show();
-			Runnable task = dialog.getTask();
+			Task task = dialog.getTask();
 			if (task != null) {
-				((DefaultListModel<Runnable>) taskList.getModel()).addElement(task);
+				((DefaultListModel<Task>) taskList.getModel()).addElement(task);
 			}
 		}
 		
@@ -109,7 +115,7 @@ public class RobotPanel extends JPanel implements TaskPanel {
 		public void actionPerformed(ActionEvent e) {
 			int index = taskList.getSelectedIndex();
 			if (index != -1) {
-				((DefaultListModel<Runnable>) taskList.getModel()).remove(index);
+				((DefaultListModel<Task>) taskList.getModel()).remove(index);
 			}
 		}
 		

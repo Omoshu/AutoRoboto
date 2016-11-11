@@ -1,10 +1,12 @@
 package com.cionik.autoroboto.task;
 
-public class TaskComposite implements Runnable {
+import com.cionik.autoroboto.ui.TaskPanel;
+
+public class TaskComposite implements Task {
 	
-	private Runnable[] tasks;
+	private Task[] tasks;
 	
-	public TaskComposite(Runnable[] tasks) {
+	public TaskComposite(Task[] tasks) {
 		if (tasks == null) {
 			throw new IllegalArgumentException("tasks cannot be null");
 		}
@@ -14,9 +16,14 @@ public class TaskComposite implements Runnable {
 
 	@Override
 	public void run() {
-		for (Runnable r : tasks) {
-			r.run();
+		for (Task t : tasks) {
+			t.run();
 		}
+	}
+
+	@Override
+	public TaskPanel createPanel() {
+		return null;
 	}
 	
 }

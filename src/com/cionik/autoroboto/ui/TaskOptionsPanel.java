@@ -52,25 +52,12 @@ public class TaskOptionsPanel extends JPanel {
 		
 		this.taskPanel = taskPanel;
 		
+		addListeners();
 		initComponents();
-		installListeners();
 		layoutComponents();
 	}
 	
-	private void initComponents() {
-		delayTextField.setColumns(7);
-		initialDelayTextField.setColumns(7);
-		iterationsTextField.setColumns(7);
-		startStopKeyTextField.setColumns(7);
-		
-		delayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
-		initialDelayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
-		
-		startButton.setEnabled(hasValidInput());
-		stopButton.setEnabled(scheduler.isRunning());
-	}
-	
-	private void installListeners() {
+	private void addListeners() {
 		Listener<Void> listener = new CheckInputListener();
 		ActionListener actionListener = new ActionListenerAdapter(listener);
 		DocumentListener documentListener = new DocumentListenerAdapter(listener);
@@ -99,6 +86,19 @@ public class TaskOptionsPanel extends JPanel {
 		if (GlobalScreen.isNativeHookRegistered()) {
 			GlobalScreen.addNativeKeyListener(new HotkeyListener());
 		}
+	}
+	
+	private void initComponents() {
+		delayTextField.setColumns(7);
+		initialDelayTextField.setColumns(7);
+		iterationsTextField.setColumns(7);
+		startStopKeyTextField.setColumns(7);
+		
+		delayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
+		initialDelayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
+		
+		startButton.setEnabled(hasValidInput());
+		stopButton.setEnabled(scheduler.isRunning());
 	}
 	
 	private void layoutComponents() {
