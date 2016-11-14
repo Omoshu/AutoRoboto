@@ -11,6 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TaskComposite;
@@ -25,7 +26,10 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	
 	private JList<Task> taskList = new JList<Task>(new DefaultListModel<Task>());
 	private JScrollPane taskListScrollPane = new JScrollPane(taskList);
+	private JButton moveUpButton = new BasicArrowButton(BasicArrowButton.NORTH);
+	private JButton moveDownButton = new BasicArrowButton(BasicArrowButton.SOUTH);
 	private JButton addButton = new JButton("Add...");
+	private JButton editButton = new JButton("Edit...");
 	private JButton removeButton = new JButton("Remove");
 	
 	private TaskType[] taskTypes;
@@ -66,31 +70,72 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	}
 	
 	private void initComponents() {
-		checkRemoveButton();
+		checkButtons();
 	}
 	
 	private void addListeners() {
-		taskList.addListSelectionListener(new RemoveSelectionListener());
+		taskList.addListSelectionListener(new TaskListSelectionListener());
+		moveUpButton.addActionListener(new MoveUpActionListener());
+		moveDownButton.addActionListener(new MoveDownActionListener());
 		addButton.addActionListener(new AddActionListener());
+		editButton.addActionListener(new EditActionListener());
 		removeButton.addActionListener(new RemoveActionListener());
 	}
 	
 	private void layoutComponents() {
 		setLayout(new MigLayout());
-		add(taskListScrollPane, "span, push, grow, wrap");
-		add(addButton, "span, split 2, align center");
-		add(removeButton, "align center, wrap");
+		add(taskListScrollPane, "span 1 2, grow");
+		add(moveUpButton, "pushy, aligny bottom, wrap");
+		add(moveDownButton, "pushy, aligny top, wrap");
+		add(addButton, "span, split 3, align center");
+		add(editButton);
+		add(removeButton);
 	}
 	
-	private void checkRemoveButton() {
-		removeButton.setEnabled(taskList.getSelectedIndex() != -1);
+	private void checkButtons() {
+		int index = taskList.getSelectedIndex();
+		boolean enabled = index != -1;
+		editButton.setEnabled(enabled);
+		removeButton.setEnabled(enabled);
+		moveUpButton.setEnabled(enabled && index != 0);
+		moveDownButton.setEnabled(enabled && index != taskList.getModel().getSize() - 1);
 	}
 	
-	private class RemoveSelectionListener implements ListSelectionListener {
+	private class TaskListSelectionListener implements ListSelectionListener {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			checkRemoveButton();
+			checkButtons();
+		}
+		
+	}
+	
+	private class MoveUpActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int index = taskList.getSelectedIndex();
+			if (index > 0) {
+				DefaultListModel<Task> model = (DefaultListModel<Task>) taskList.getModel();
+				Task task = model.remove(index);
+				model.add(index - 1, task);
+				taskList.setSelectedIndex(index - 1);
+			}
+		}
+		
+	}
+	
+	private class MoveDownActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DefaultListModel<Task> model = (DefaultListModel<Task>) taskList.getModel();
+			int index = taskList.getSelectedIndex();
+			if (index < model.getSize() - 1) {
+				Task task = model.remove(index);
+				model.add(index + 1, task);
+				taskList.setSelectedIndex(index + 1);
+			}
 		}
 		
 	}
@@ -108,6 +153,24 @@ public class RobotPanel extends JPanel implements TaskPanel {
 				Task task = taskDialog.getTask();
 				if (task != null) {
 					((DefaultListModel<Task>) taskList.getModel()).addElement(task);
+				}
+			}
+		}
+		
+	}
+	
+	private class EditActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int index = taskList.getSelectedIndex();
+			if (index != -1) {
+				DefaultListModel<Task> model = (DefaultListModel<Task>) taskList.getModel();
+				TaskDialog dialog = new TaskDialog(model.get(index));
+				dialog.show();
+				Task task = dialog.getTask();
+				if (task != null) {
+					model.set(index, task);
 				}
 			}
 		}
