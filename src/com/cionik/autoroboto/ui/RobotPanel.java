@@ -99,11 +99,16 @@ public class RobotPanel extends JPanel implements TaskPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			TaskSelectionDialog dialog = new TaskSelectionDialog(taskTypes);
-			dialog.show();
-			Task task = dialog.getTask();
-			if (task != null) {
-				((DefaultListModel<Task>) taskList.getModel()).addElement(task);
+			TaskSelectionDialog selectionDialog = new TaskSelectionDialog(taskTypes);
+			selectionDialog.show();
+			TaskType type = selectionDialog.getTaskType();
+			if (type != null) {
+				TaskDialog taskDialog = new TaskDialog(type);
+				taskDialog.show();
+				Task task = taskDialog.getTask();
+				if (task != null) {
+					((DefaultListModel<Task>) taskList.getModel()).addElement(task);
+				}
 			}
 		}
 		
