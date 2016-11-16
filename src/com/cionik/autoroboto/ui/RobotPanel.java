@@ -84,7 +84,7 @@ public class RobotPanel extends JPanel implements TaskPanel {
 	
 	private void layoutComponents() {
 		setLayout(new MigLayout());
-		add(taskListScrollPane, "span 1 2, grow");
+		add(taskListScrollPane, "span 1 2, push, grow");
 		add(moveUpButton, "pushy, aligny bottom, wrap");
 		add(moveDownButton, "pushy, aligny top, wrap");
 		add(addButton, "span, split 3, align center");
