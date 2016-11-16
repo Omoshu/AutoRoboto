@@ -98,13 +98,17 @@ public abstract class MouseTaskPanel extends JPanel implements TaskPanel {
 		setLayout(new MigLayout());
 		add(new JLabel("Mouse Button: "), "span, split 2");
 		add(mouseButtonComboBox, "wrap");
-		add(new JSeparator(), "span, growx, wrap");
-		add(currentMouseLocationCheckBox, "span, wrap");
-		add(new JLabel("X Point: "), "split 2");
-		add(xTextField);
+		add(new JSeparator(), "span, pushx, growx");
+		add(currentMouseLocationCheckBox, "span");
+		
+		JPanel pointPanel = new JPanel(new MigLayout("insets 0"));
+		pointPanel.add(new JLabel("X Point: "));
+		pointPanel.add(xTextField, "wrap");
+		pointPanel.add(new JLabel("Y Point: "));
+		pointPanel.add(yTextField);
+		
+		add(pointPanel, "split 2");
 		add(setPointButton, "span 1 2, growy, wrap");
-		add(new JLabel("Y Point: "), "split 2");
-		add(yTextField);
 	}
 	
 	private class CurrentMouseLocationActionListener implements ActionListener {
