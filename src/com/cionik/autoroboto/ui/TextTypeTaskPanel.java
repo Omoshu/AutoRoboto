@@ -53,10 +53,10 @@ public class TextTypeTaskPanel extends JPanel implements TaskPanel {
 		setLayout(new MigLayout());
 		
 		add(new JLabel("Text: "));
-		add(textField, "span, pushx, growx, wrap");
+		add(textField, "spanx, pushx, growx, wrap");
 		add(new JLabel("Character Delay: "));
-		add(characterDelayTextField, "growx");
-		add(characterDelayComboBox);
+		add(characterDelayTextField);
+		add(characterDelayComboBox, "wrap");
 	}
 	
 	public String getText() {

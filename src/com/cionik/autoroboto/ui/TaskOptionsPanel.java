@@ -103,7 +103,7 @@ public class TaskOptionsPanel extends JPanel {
 	
 	private void layoutComponents() {
 		setLayout(new MigLayout());
-		add(taskPanel.getPanel(), "span, pushx, growx, wrap");
+		add(taskPanel.getPanel(), "span, growx, wrap");
 		add(new JSeparator(), "span, growx, wrap");
 		add(pauseCheckBox, "span");
 		add(new JLabel("Initial Delay: "));
