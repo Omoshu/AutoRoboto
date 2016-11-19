@@ -1,5 +1,6 @@
 package com.cionik.autoroboto.ui;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.TimeUnit;
 
@@ -59,18 +60,10 @@ public class TaskOptionsPanel extends JPanel {
 		initialDelayTextField.getDocument().addDocumentListener(documentListener);
 		iterationsTextField.getDocument().addDocumentListener(documentListener);
 		
-		infiniteCheckBox.addActionListener(e ->  iterationsTextField.setEnabled(!infiniteCheckBox.isSelected()));
-		
-		clearButton.addActionListener(e -> stopShortcutTextField.clear());
-		
-		startButton.addActionListener(e -> {
-			if (hasValidInput()) {
-				start();
-			}
-		});
-		stopButton.addActionListener(e -> {
-			scheduler.shutdown();
-		});
+		infiniteCheckBox.addActionListener(new InfiniteCheckBoxActionListener());
+		clearButton.addActionListener(new ClearButtonActionListener());
+		startButton.addActionListener(new StartButtonActionListener());
+		stopButton.addActionListener(new StopButtonActionListener());
 		
 		scheduler.addListener(new TaskListenerImpl());
 	}
@@ -135,6 +128,44 @@ public class TaskOptionsPanel extends JPanel {
 		@Override
 		public void handleEvent(Void t) {
 			startButton.setEnabled(hasValidInput());
+		}
+		
+	}
+	
+	private class InfiniteCheckBoxActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			iterationsTextField.setEnabled(!infiniteCheckBox.isSelected());
+		}
+		
+	}
+	
+	private class ClearButtonActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			stopShortcutTextField.clear();
+		}
+		
+	}
+	
+	private class StartButtonActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (hasValidInput()) {
+				start();
+			}
+		}
+		
+	}
+	
+	private class StopButtonActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			scheduler.shutdown();
 		}
 		
 	}
