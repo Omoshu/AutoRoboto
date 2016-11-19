@@ -25,7 +25,7 @@ public class TaskDialog {
 		taskPanel = type.createPanel();
 		
 		addListeners();
-		initComponents();
+		initComponents(type);
 		layoutComponents();
 	}
 	
@@ -35,7 +35,8 @@ public class TaskDialog {
 		finishButton.addActionListener(new FinishActionListener());
 	}
 	
-	private void initComponents() {
+	private void initComponents(TaskType type) {
+		dialog.setTitle(type.toString());
 		checkFinishButton();
 	}
 	
