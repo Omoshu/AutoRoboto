@@ -1,7 +1,6 @@
 package com.cionik.autoroboto.ui;
 
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
@@ -10,16 +9,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.KeyStroke;
 import javax.swing.event.DocumentListener;
 
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
-import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseMotionListener;
-
 import com.cionik.autoroboto.model.Time;
+import com.cionik.autoroboto.task.Task;
 import com.cionik.autoroboto.task.TaskListener;
 import com.cionik.autoroboto.task.TaskScheduler;
 import com.cionik.autoroboto.util.JKeyStrokeTextField;
@@ -39,12 +32,11 @@ public class TaskOptionsPanel extends JPanel {
 	private JNumericTextField iterationsTextField = new JNumericTextField(0);
 	private JComboBox<TimeUnit> delayComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
 	private JComboBox<TimeUnit> initialDelayComboBox = new JComboBox<TimeUnit>(TimeUnit.values());
-	private JKeyStrokeTextField startStopKeyTextField = new JKeyStrokeTextField();
+	private JKeyStrokeTextField stopShortcutTextField = new JKeyStrokeTextField();
 	private JButton clearButton = new JButton("Clear");
 	private JButton startButton = new JButton("Start");
 	private JButton stopButton = new JButton("Stop");
 	private TaskScheduler scheduler = new TaskScheduler();
-	private NativeMouseMotionListener skipListener;
 	private TaskPanel taskPanel;
 	
 	public TaskOptionsPanel(TaskPanel taskPanel) {
@@ -69,7 +61,7 @@ public class TaskOptionsPanel extends JPanel {
 		
 		infiniteCheckBox.addActionListener(e ->  iterationsTextField.setEnabled(!infiniteCheckBox.isSelected()));
 		
-		clearButton.addActionListener(e -> startStopKeyTextField.clear());
+		clearButton.addActionListener(e -> stopShortcutTextField.clear());
 		
 		startButton.addActionListener(e -> {
 			if (hasValidInput()) {
@@ -77,22 +69,17 @@ public class TaskOptionsPanel extends JPanel {
 			}
 		});
 		stopButton.addActionListener(e -> {
-			if (scheduler.isRunning()) {
-				stop();
-			}
+			scheduler.shutdown();
 		});
 		
-		scheduler.addListener(new ClickTaskListener());
-		if (GlobalScreen.isNativeHookRegistered()) {
-			GlobalScreen.addNativeKeyListener(new HotkeyListener());
-		}
+		scheduler.addListener(new TaskListenerImpl());
 	}
 	
 	private void initComponents() {
 		delayTextField.setColumns(7);
 		initialDelayTextField.setColumns(7);
 		iterationsTextField.setColumns(7);
-		startStopKeyTextField.setColumns(7);
+		stopShortcutTextField.setColumns(7);
 		
 		delayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
 		initialDelayComboBox.setSelectedItem(TimeUnit.MILLISECONDS);
@@ -117,8 +104,8 @@ public class TaskOptionsPanel extends JPanel {
 		add(iterationsTextField);
 		add(infiniteCheckBox, "wrap");
 		add(new JSeparator(), "span, growx, wrap");
-		add(new JLabel("Key to Start & Stop: "));
-		add(startStopKeyTextField);
+		add(new JLabel("Stop Shortcut: "));
+		add(stopShortcutTextField);
 		add(clearButton, "wrap");
 		add(new JSeparator(), "span, growx, wrap");
 		add(startButton, "span, split, align center");
@@ -126,17 +113,15 @@ public class TaskOptionsPanel extends JPanel {
 	}
 	
 	private void start() {
-		Runnable task = taskPanel.getTask();
+		Task task = taskPanel.getTask();
 		if (task != null) {
-			Time initialDelay = new Time((TimeUnit) initialDelayComboBox.getSelectedItem(), initialDelayTextField.getValue(0));
-			Time delay = new Time((TimeUnit) delayComboBox.getSelectedItem(), delayTextField.getValue(0));
-			int iterations = infiniteCheckBox.isSelected() ? -1 : iterationsTextField.getValue();
-			scheduler.schedule(task, initialDelay, delay, iterations);
+			scheduler.schedule(task,
+					new Time((TimeUnit) initialDelayComboBox.getSelectedItem(), initialDelayTextField.getValue(0)),
+					new Time((TimeUnit) delayComboBox.getSelectedItem(), delayTextField.getValue(0)),
+					infiniteCheckBox.isSelected() ? -1 : iterationsTextField.getValue(),
+					pauseCheckBox.isSelected(),
+					stopShortcutTextField.getKeyStroke());
 		}
-	}
-	
-	private void stop() {
-		scheduler.shutdown();
 	}
 	
 	private boolean hasValidInput() {
@@ -154,71 +139,18 @@ public class TaskOptionsPanel extends JPanel {
 		
 	}
 	
-	private class HotkeyListener implements NativeKeyListener {
-
-		@Override
-		public void nativeKeyPressed(NativeKeyEvent e) {
-			KeyStroke stroke = startStopKeyTextField.getKeyStroke();
-			if (stroke != null &&
-				KeyEvent.getKeyText(stroke.getKeyCode()).equals(NativeKeyEvent.getKeyText(e.getKeyCode())) &&
-				KeyEvent.getModifiersExText(stroke.getModifiers()).equals(NativeKeyEvent.getModifiersText(e.getModifiers()))) {
-				if (scheduler.isRunning()) {
-					stop();
-				} else {
-					if (hasValidInput()) {
-						start();
-					}
-				}
-			}
-		}
-
-		@Override
-		public void nativeKeyReleased(NativeKeyEvent e) {
-		}
-
-		@Override
-		public void nativeKeyTyped(NativeKeyEvent e) {
-		}
-		
-	}
-	
-	private class ClickTaskListener implements TaskListener {
+	private class TaskListenerImpl implements TaskListener {
 
 		@Override
 		public void beforeStart() {
-			if (GlobalScreen.isNativeHookRegistered() && pauseCheckBox.isSelected()) {
-				skipListener = new ClickerSkipListener();
-				GlobalScreen.addNativeMouseMotionListener(skipListener);
-			}
-			
 			startButton.setEnabled(false);
 			stopButton.setEnabled(true);
 		}
 
 		@Override
 		public void afterShutdown() {
-			if (skipListener != null) {
-				GlobalScreen.removeNativeMouseMotionListener(skipListener);
-				skipListener = null;
-			}
-			
-			stopButton.setEnabled(false);
 			startButton.setEnabled(true);
-		}
-		
-	}
-	
-	private class ClickerSkipListener implements NativeMouseMotionListener {
-
-		@Override
-		public void nativeMouseDragged(NativeMouseEvent e) {
-		}
-
-		@Override
-		public void nativeMouseMoved(NativeMouseEvent e) {
-			if (scheduler.isRunning()) {
-				scheduler.skip();
-			}
+			stopButton.setEnabled(false);
 		}
 		
 	}
