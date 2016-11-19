@@ -101,8 +101,8 @@ public class TaskOptionsPanel extends JPanel {
 		add(stopShortcutTextField);
 		add(clearButton, "wrap");
 		add(new JSeparator(), "span, growx, wrap");
-		add(startButton, "span, split, align center");
-		add(stopButton, "align center");
+		add(startButton, "span, split, pushy, alignx center, aligny bottom");
+		add(stopButton, "alignx center, aligny bottom");
 	}
 	
 	private void start() {
